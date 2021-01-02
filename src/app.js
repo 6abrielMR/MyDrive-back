@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const bodyparser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
+const err = require('./middlewares/manageError');
 
 const app = express();
 
@@ -21,6 +22,9 @@ app.use(bodyparser.json());
 app.use(express.urlencoded({extended: false}));
 app.use(fileUpload());
 app.use(cors());
+
+// errors
+app.use(err);
 
 // routes
 app.use('/', generalRoutes);
