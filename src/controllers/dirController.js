@@ -1,15 +1,15 @@
 const fs = require('fs');
 const path = require('path');
+const config = require('../../config/config');
 
 const controller = {};
-const pathBase = "./public/base/";
 
 // Globals vars
 var data;
 
 controller.create = (req, res) => {
     let { folderName } = req.body;
-    let newFolder = path.join(pathBase, folderName);
+    let newFolder = path.join(config.PATH_BASE, folderName);
     data = {};
     return fs.mkdir(newFolder, { recursive: true }, (err) => {
         if (err) {

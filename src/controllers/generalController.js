@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const rename = util.promisify(fs.rename);
+const config = require('../../config/config');
 
 const controller = {};
-const pathBase = "./public/base/";
 
 // Utils functions
 async function isExistElement(pathToCheck) {
@@ -34,7 +34,7 @@ async function isExistElement(pathToCheck) {
 // Routes
 controller.all = (req, res) => {
     let { pathToSearch } = req.body;
-    let currentFolder = path.join(pathBase, pathToSearch);
+    let currentFolder = path.join(config.PATH_BASE, pathToSearch);
     let files = [], dirs = [];
     let data = {};
     data.state = "Err";
@@ -65,7 +65,7 @@ controller.all = (req, res) => {
 
 controller.delete = async (req, res) => {
     let { elementName } = req.body;
-    let deleteFolder = path.join(pathBase, elementName);
+    let deleteFolder = path.join(config.PATH_BASE, elementName);
     let isExist = await isExistElement(deleteFolder);
     data = {};
     if (isExist.state) {
@@ -99,8 +99,8 @@ controller.delete = async (req, res) => {
 controller.move = async (req, res) => {
     let { currentPath } = req.body;
     let { pathToMove } = req.body;
-    let oldPath = path.join(pathBase, currentPath);
-    let newPath = path.join(pathBase, pathToMove);
+    let oldPath = path.join(config.PATH_BASE, currentPath);
+    let newPath = path.join(config.PATH_BASE, pathToMove);
     let isExist = await isExistElement(oldPath);
     data = {};
     if (isExist.state) {
@@ -131,8 +131,8 @@ controller.move = async (req, res) => {
 controller.rename = async (req, res) => {
     let { currentName } = req.body;
     let { nameToChange } = req.body;
-    let oldName = path.join(pathBase, currentName);
-    let newName = path.join(pathBase, nameToChange);
+    let oldName = path.join(config.PATH_BASE, currentName);
+    let newName = path.join(config.PATH_BASE, nameToChange);
     let isExist = await isExistElement(newName);
     data = {};
     if (isExist.state) {

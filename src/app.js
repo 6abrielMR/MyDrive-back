@@ -4,6 +4,7 @@ const bodyparser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const err = require('./middlewares/manageError');
+const config = require('../config/config');
 
 const app = express();
 
@@ -14,7 +15,7 @@ const generalRoutes = require('./routes/general');
 const { urlencoded } = require('express');
 
 // settings
-app.set('port', process.env.PORT || 3000);
+app.set('port', config.PORT);
 
 // middlewares
 app.use(morgan('dev'));

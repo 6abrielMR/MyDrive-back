@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const mimeTypes = require('mime-types');
-const { nextTick } = require('process');
+const config = require('../../config/config');
 
 const controller = {};
-const pathBase = "./public/base";
 
 // Global vars
 var data;
@@ -60,7 +59,7 @@ controller.upload = (req, res) => {
         
         if (!stateSave) break;
         
-        file.mv(path.join(pathBase, currentPath), err => err ? stateSave = false : stateSave = true);
+        file.mv(path.join(config.PATH_BASE, currentPath), err => err ? stateSave = false : stateSave = true);
         
         if (!stateSave) break;
     }
@@ -84,10 +83,10 @@ controller.download = async (req, res) => {
     let stateDownload = true;
     let { fileToDownload } = req.body;
     let fullPathToDownload = fileToDownload.split(".");
-    let mimetype = mimeTypes.lookup(path.join(pathBase, fileToDownload));
+    let mimetype = mimeTypes.lookup(path.join(config.PATH_BASE, fileToDownload));
     fullPathToDownload = fileToDownload.split("/");
     let filename = fullPathToDownload[fullPathToDownload.length - 1];
-    let isExist = await isExistElement(path.join(pathBase, fileToDownload));
+    let isExist = await isExistElement(path.join(config.PATH_BASE, fileToDownload));
     if (isExist.state) {
         try {
             res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
@@ -108,7 +107,7 @@ controller.download = async (req, res) => {
     }
 
     if (stateDownload)
-        return res.download(path.join(pathBase, fileToDownload));
+        return res.download(path.join(config.PATH_BASE, fileToDownload));
     return res.status(500).send(data);
 };
 
