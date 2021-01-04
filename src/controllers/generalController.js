@@ -46,9 +46,9 @@ controller.all = (req, res) => {
             dirs.push(element);
         
         if (files.length > 0)
-            data.data.files = [files];
+            data.data.files = files;
         if (dirs.length > 0)
-            data.data.dirs = [dirs];
+            data.data.dirs = dirs;
     });
 
     if (Object.keys(data.data).length === 0) {
