@@ -81,7 +81,8 @@ controller.download = async (req, res) => {
     data = {};
 
     let stateDownload = true;
-    let { fileToDownload } = req.body;
+    let { filenameFound } = req.params;
+    let fileToDownload = filenameFound.replace(/-/g, '/');
     let fullPathToDownload = fileToDownload.split(".");
     let mimetype = mimeTypes.lookup(path.join(config.PATH_BASE, fileToDownload));
     fullPathToDownload = fileToDownload.split("/");
