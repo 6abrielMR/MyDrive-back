@@ -34,7 +34,7 @@ async function isExistElement(pathToCheck) {
 }
 
 // Routes
-controller.upload = (req, res) => {
+controller.upload = async (req, res) => {
     data = {};
     if (!req.files || Object.keys(req.files) === 0) {
         console.log("Error to save files.");
@@ -43,25 +43,47 @@ controller.upload = (req, res) => {
         data.data = {};
         return res.status(500).send(data);
     }
-
-    let files = req.files.file;
+    
+    let files = req.files.filesToUpload;
+    let { pathToUpload } = req.params;
+    let fileToSave = pathToUpload.replace(/-/g, '/');
+    console.log(fileToSave);
     let currentPath;
     let stateSave = true;
-    for (let file of files) {
-        currentPath = currentPathSave + "/" + Date.now() + "_" + file.name.split(".")[0] + "." + mimeTypes.extension(file.mimetype);
-        if (isExistElement(currentPath)) {
+    let isExist;
+
+    if (Array.isArray(files)) {
+        for (let file of files) {
+            currentPath = fileToSave + "/" + file.name.split(".")[0] + "." + mimeTypes.extension(file.mimetype);
+            isExist = await isExistElement(path.join(config.PATH_BASE, currentPath));
+            if (isExist.state) {
+                console.log("Error to save file.");
+                data.state = "Err";
+                data.message = "Ya existe un archivo con el nombre '" + file.name + "'.";
+                data.data = {};
+                stateSave = false;
+            }
+            
+            if (!stateSave) break;
+            
+            file.mv(path.join(config.PATH_BASE, currentPath), err => err ? stateSave = false : stateSave = true);
+            
+            if (!stateSave) break;
+        }
+    } else {
+        currentPath = fileToSave + "/" + files.name.split(".")[0] + "." + mimeTypes.extension(files.mimetype);
+        isExist = await isExistElement(path.join(config.PATH_BASE, currentPath));
+        if (isExist.state) {
             console.log("Error to save file.");
             data.state = "Err";
-            data.message = "Ya existe un archivo con el nombre '" + file.name + "'.";
+            data.message = "Ya existe un archivo con el nombre '" + files.name + "'.";
             data.data = {};
             stateSave = false;
         }
         
-        if (!stateSave) break;
-        
-        file.mv(path.join(config.PATH_BASE, currentPath), err => err ? stateSave = false : stateSave = true);
-        
-        if (!stateSave) break;
+        if (stateSave) {
+            files.mv(path.join(config.PATH_BASE, currentPath), err => err ? stateSave = false : stateSave = true);
+        }
     }
 
     if (stateSave) {
